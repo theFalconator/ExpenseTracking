@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <link href="/static/styles.css" rel="stylesheet">
+  </head>
+
+  <body class="p-4 dark:text-white dark:bg-gray-700">
+    {{ if .Errors }}
+    <ul class="p-2 text-sm rounded border border-red-400 bg-red-100 text-red-700 font-mono">
+      {{ range $field, $error := .Errors }}
+      <li>{{$field}}: {{$error}}</li>
+      {{ end }}
+    </ul>
+    {{ end }}
+
+    <form method="POST" class="grid grid-cols-2 gap-4">
+      <div class="col-span-2 lg:col-span-1">
+        <label for="desc">Description</label>
+        <input id="desc" type="text" name="desc" list="expense-descriptions"
+          autocomplete="off"
+          value="{{ .Description }}"
+          class="px-3 py-1 text-sm border border-gray-400 w-full" />
+        <datalist id="expense-descriptions">
+          {{ range .ExpenseAutocompletes }}
+          <option value="{{ . }}"></option>
+          {{ end }}
+        </datalist>
+      </div>
+      <div class="col-span-2 lg:col-span-1">
+        <label for="date">Date</label>
+        <input id="date" type="date" name="date"
+          value="{{ .Date }}"
+          class="px-3 py-1 text-sm w-full {{ if .Errors.date }} border-2 border-red-700 {{ else }} border border-gray-400 {{ end }}" />
+        {{ if .Errors.date }}
+        <div class="my-1 p-2 text-sm rounded border border-red-400 bg-red-100 text-red-700 font-mono flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+          </svg>
+          '{{ .Date }}' is not a valid date.
+        </div>
+        {{ end }}
+      </div>
+
+      <div class="col-span-2 lg:col-span-1">
+        <label for="paidBy">Paid By</label>
+        <select id="paidBy" name="paidBy" class="px-3 py-1 text-sm border border-gray-400 w-full">
+          {{ range .Users }}
+          <option value="{{ .Id }}">{{ .Name }}</option>
+          {{ end }}
+        </select>
+      </div>
+
+      <div class="col-span-2 lg:col-span-1">
+        <label for="amount">Amount</label>
+        <input id="amount" name="amount" type="number" step="0.01"
+          value="{{ .Amount }}"
+          class="px-3 py-1 text-sm w-full {{ if .Errors.amount }} border-2 border-red-700 {{ else }} border border-gray-400 {{ end }}" />
+        {{ if .Errors.amount }}
+        <div class="my-1 p-2 text-sm rounded border border-red-400 bg-red-100 text-red-700 font-mono flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+          </svg>
+
+          '{{ .Amount }}' is not a valid amount.
+        </div>
+        {{ end }}
+      </div>
+
+      <div class="col-span-2">
+        {{ range .Users }}
+        <label for="chk-{{ .Id }}" class="inline-flex items-center">
+          <input type="checkbox" id="chk-{{ .Id }}" name="chk-{{ .Id }}" class="w-6 h-6 mr-2" value="{{ .Id }}" checked />
+          {{ .Name }}
+        </label>
+        {{ end }}
+      </div>
+
+      <div class="col-span-2">
+        <button type="submit" class="w-full px-3 py-1 font-bold text-sm bg-green-700 text-white">Submit</button>
+      </div>
+    </form>
+  </body>
+
+</html>
