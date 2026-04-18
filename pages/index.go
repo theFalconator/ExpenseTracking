@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -45,23 +44,6 @@ func NewIndexPageHandler(s *users.Store, a *activity.Store, g *groups.Store) *In
 		groupStore:    g,
 	}
 }
-
-func FormatCents(cents int) string {
-	dollars := cents / 100
-	remainingCents := cents % 100
-	return fmt.Sprintf("$%d.%02d", dollars, remainingCents)
-}
-
-func FormatCentsNumber(cents int) string {
-	dollars := cents / 100
-	remainingCents := cents % 100
-	return fmt.Sprintf("%d.%02d", dollars, remainingCents)
-}
-
-func FormatTime(t time.Time) string {
-	return t.Format("January 2, 2006")
-}
-
 
 func (h *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
