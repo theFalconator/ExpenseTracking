@@ -23,23 +23,11 @@ type IndexPageHandler struct {
 type IndexPageModel struct {
 	ActiveGroup int
 	Groups      []groups.Group
-	Users       []UserDto
+	Users       []activity.UserDto
 	Expenses    []ExpenseDto
 	Err         error
 }
 
-type DebtDto struct {
-	Owes   string
-	Amount int
-}
-
-type UserDto struct {
-	Id         int
-	Name       string
-	AmountOwed int
-	TotalPaid  int
-	Debts      []DebtDto
-}
 
 type ExpenseDto struct {
 	Id             int
@@ -74,72 +62,6 @@ func FormatTime(t time.Time) string {
 	return t.Format("January 2, 2006")
 }
 
-type Pair struct {
-	Owed   int
-	OwedBy int
-}
-
-func computeAmountOwedByUserId(expenses []activity.ExpenseRow) map[Pair]int {
-	numParticipants := map[int]int{}
-	dict := map[Pair]int{}
-
-	for _, e := range expenses {
-		numParticipants[e.ExpenseId] += 1
-	}
-
-	for _, e := range expenses {
-		if e.PaidBy == e.ParticipantId {
-			continue
-		}
-
-		normal := Pair{Owed: e.PaidBy, OwedBy: e.ParticipantId}
-		inverse := Pair{OwedBy: e.PaidBy, Owed: e.ParticipantId}
-
-		dict[normal] += e.AmountCentsUsd / numParticipants[e.ExpenseId]
-		if dict[inverse] > dict[normal] {
-			dict[inverse] -= dict[normal]
-			dict[normal] = 0
-		} else if dict[normal] > dict[inverse] {
-			dict[normal] -= dict[inverse]
-			dict[inverse] = 0
-		}
-
-		if dict[normal] == 0 {
-			delete(dict, normal)
-		}
-
-		if dict[inverse] == 0 {
-			delete(dict, inverse)
-		}
-	}
-
-	return dict
-}
-
-func computeDebts(owed map[Pair]int, userList []users.User, usersById map[int]UserDto) {
-	for i := range userList {
-		u := userList[i]
-
-		usersById[u.Id] = UserDto{
-			Id:         u.Id,
-			Name:       u.Name,
-			AmountOwed: 0,
-			TotalPaid:  0,
-			Debts:      []DebtDto{},
-		}
-	}
-
-	for k, v := range owed {
-		user := usersById[k.OwedBy]
-
-		user.Debts = append(user.Debts, DebtDto{
-			Owes:   usersById[k.Owed].Name,
-			Amount: v,
-		})
-
-		usersById[k.OwedBy] = user
-	}
-}
 
 func (h *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.New("index.html").Funcs(template.FuncMap{
@@ -162,7 +84,7 @@ func (h *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Expenses:    []ExpenseDto{},
 			Err:         err,
 			Groups:      groupList,
-			Users:       []UserDto{},
+			Users:       []activity.UserDto{},
 		}
 
 		tmpl.Execute(w, model)
@@ -182,10 +104,10 @@ func (h *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	settlment, err := h.activityStore.GetLatestSettlementForGroup(activeGroup)
 	expenseList, err := h.activityStore.ListExpensesForGroup(settlment.LastExpenseId, activeGroup)
-	owed := computeAmountOwedByUserId(expenseList)
+	owed := activity.ComputeAmountOwedByUserId(expenseList)
 
-	usersById := map[int]UserDto{}
-	computeDebts(owed, userList, usersById)
+	usersById := map[int]activity.UserDto{}
+	activity.ComputeDebts(owed, userList, usersById)
 
 	expenses := []ExpenseDto{}
 	for i, v := range expenseList {
@@ -207,7 +129,7 @@ func (h *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		usersById[v.PaidBy] = entry
 	}
 
-	dtos := []UserDto{}
+	dtos := []activity.UserDto{}
 	for _, v := range usersById {
 		dtos = append(dtos, v)
 	}

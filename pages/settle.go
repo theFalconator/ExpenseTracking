@@ -25,7 +25,7 @@ func NewSettlementHandler(u *users.Store, a *activity.Store) *SettlementHandler 
 
 type SettlmentModel struct {
 	Err   error
-	Users []UserDto
+	Users []activity.UserDto
 }
 
 func (h *SettlementHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -55,9 +55,9 @@ func (h *SettlementHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	settlment, err := h.activityStore.GetLatestSettlementForGroup(group)
 	expenseList, err := h.activityStore.ListExpensesForGroup(settlment.LastExpenseId, group)
 
-	owed := computeAmountOwedByUserId(expenseList)
-	usersById := map[int]UserDto{}
-	computeDebts(owed, users, usersById)
+	owed := activity.ComputeAmountOwedByUserId(expenseList)
+	usersById := map[int]activity.UserDto{}
+	activity.ComputeDebts(owed, users, usersById)
 	for i, v := range expenseList {
 		// relies on returning a sorted slice -- make sure query has "order by Expense.Id" in it
 		if i > 0 && v.ExpenseId == expenseList[i-1].ExpenseId {
@@ -69,7 +69,7 @@ func (h *SettlementHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		usersById[v.PaidBy] = entry
 	}
 
-	dtos := []UserDto{}
+	dtos := []activity.UserDto{}
 	for _, v := range usersById {
 		dtos = append(dtos, v)
 	}
