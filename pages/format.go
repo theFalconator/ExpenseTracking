@@ -5,6 +5,9 @@ import (
 	"time"
 )
 
+// TODO: Why do I have two of these? Couldn't i just do <span>${{ value
+// | formatCentsNumber }}</span>
+// and then remove this fn?
 func FormatCents(cents int) string {
 	dollars := cents / 100
 	remainingCents := cents % 100
