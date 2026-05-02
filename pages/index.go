@@ -3,6 +3,7 @@ package pages
 import (
 	"html/template"
 	"log"
+	"log/slog"
 	"net/http"
 	"sort"
 	"strconv"
@@ -128,5 +129,8 @@ func (h *IndexPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Err:         err,
 	}
 
-	tmpl.Execute(w, model)
+	err = tmpl.Execute(w, model)
+	if err != nil {
+		slog.Error("Error executing template", "error", err)
+	}
 }

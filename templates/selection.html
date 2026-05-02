@@ -4,42 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
+    <title>Select Transactions</title>
     <link href="/static/styles.css" rel="stylesheet">
 </head>
 
-<body class="p-4 dark:text-white dark:bg-gray-700">
-<form action="/upload" method="POST">
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-gray-100 p-6">
+<div class="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <form action="/upload" method="POST" class="p-6">
     <input type="hidden" name="count" value="{{ .Count }}" />
     <input type="hidden" name="paidBy" value="{{ .PaidBy }}" />
     <input type="hidden" name="groupId" value="{{ .GroupId }}" />
-    <table class="font-mono text-sm">
-        <thead>
-        <tr>
-            <th class="px-3 py-1 text-left"></th>
-            <th class="px-3 py-1 text-left">Date</th>
-            <th class="px-3 py-1 text-left">Description</th>
-            <th class="px-3 py-1 text-right">Amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{ range $i, $row := .Rows }}
-            <input type="hidden" name="date-{{$i}}" value="{{ $row.TransactionDate }}" />
-            <input type="hidden" name="description-{{$i}}" value="{{ $row.Description }}" />
-            <input type="hidden" name="amount-{{$i}}" value="{{ $row.Amount }}" />
-            <tr class="border">
-                <td class="px-3 py-1 text-left">
-                    <input type="checkbox" checked name="selected-{{$i}}" class="w-6 h-6" />
-                </td>
-                <td class="px-3 py-1 text-left">{{ $row.TransactionDate | formatTime }}</td>
-                <td class="px-3 py-1 text-left">{{ $row.Description }}</td>
-                <td class="px-3 py-1 text-right">{{ $row.Amount | formatCents }}</td>
-            </tr>
-        {{ end }}
-        </tbody>
-    </table>
-    <button type="submit" class="w-full px-3 py-1 font-bold text-sm bg-green-700 text-white">Submit</button>
-</form>
+        <div class="mb-6 flex items-center justify-between">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Select Transactions</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Total items: {{ .Count }}</p>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                <tr class="bg-gray-50 dark:bg-gray-700 border-y border-gray-200 dark:border-gray-600">
+                    <th class="px-4 py-4 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">
+                        <div class="flex items-center">
+                            <input type="checkbox" checked name="all" class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-100 dark:bg-gray-600 dark:border-gray-500"/>
+                            <span class="ml-2">Select All</span>
+                        </div>
+                    </th>
+                    <th class="px-4 py-4 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Date</th>
+                    <th class="px-4 py-4 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Description</th>
+                    <th class="px-4 py-4 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">Amount</th>
+                </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800">
+                {{ range $i, $row := .Rows }}
+                    <input type="hidden" name="date-{{$i}}" value="{{ $row.TransactionDate }}" />
+                    <input type="hidden" name="description-{{$i}}" value="{{ $row.Description }}" />
+                    <input type="hidden" name="amount-{{$i}}" value="{{ $row.Amount }}" />
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-100 dark:border-gray-700">
+                        <td class="px-4 py-4">
+                            <input type="checkbox" checked name="selected-{{$i}}" class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-100 dark:bg-gray-600 dark:border-gray-500 cursor-pointer"/>
+                        </td>
+                        <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-300">{{ $row.TransactionDate | formatTime }}</td>
+                        <td class="px-4 py-4 text-sm text-gray-600 dark:text-gray-300 break-words">{{ $row.Description }}</td>
+                        <td class="px-4 py-4 text-sm font-semibold text-gray-800 dark:text-gray-100 text-right">{{ $row.Amount | formatCents }}</td>
+                    </tr>
+                {{ end }}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <label class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <input type="checkbox" name="selectAll" class="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 bg-gray-100 dark:bg-gray-600 dark:border-gray-500"/>
+                <span>Select all items</span>
+            </label>
+            <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                Submit
+            </button>
+        </div>
+    </form>
+</div>
 </body>
 
 </html>

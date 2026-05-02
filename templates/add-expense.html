@@ -1,88 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add Expense</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="container mx-auto px-4 py-8 max-w-lg">
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Add Expense</h1>
+    </header>
 
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
-    <link href="/static/styles.css" rel="stylesheet">
-  </head>
-
-  <body class="p-4 dark:text-white dark:bg-gray-700">
     {{ if .Errors }}
-    <ul class="p-2 text-sm rounded border border-red-400 bg-red-100 text-red-700 font-mono">
-      {{ range $field, $error := .Errors }}
-      <li>{{$field}}: {{$error}}</li>
-      {{ end }}
-    </ul>
+    <div class="mb-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-400 rounded-md">
+      <ul class="text-sm text-red-700 dark:text-red-300 space-y-1">
+        {{ range $field, $error := .Errors }}
+        <li class="flex items-center gap-2 font-mono text-xs">
+          <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+          </svg>
+          {{ $field }}: {{ $error }}
+        </li>
+        {{ end }}
+      </ul>
+    </div>
     {{ end }}
 
-    <form method="POST" class="grid grid-cols-2 gap-4">
-      <div class="col-span-2 lg:col-span-1">
-        <label for="desc">Description</label>
+    <form method="POST" class="space-y-4 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <div>
+        <label for="desc" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
         <input id="desc" type="text" name="desc" list="expense-descriptions"
           autocomplete="off"
           value="{{ .Description }}"
-          class="px-3 py-1 text-sm border border-gray-400 w-full" />
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white bg-white dark:bg-gray-700" 
+          placeholder="Enter expense description" />
         <datalist id="expense-descriptions">
           {{ range .ExpenseAutocompletes }}
           <option value="{{ . }}"></option>
           {{ end }}
         </datalist>
       </div>
-      <div class="col-span-2 lg:col-span-1">
-        <label for="date">Date</label>
+
+      <div>
+        <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date</label>
         <input id="date" type="date" name="date"
           value="{{ .Date }}"
-          class="px-3 py-1 text-sm w-full {{ if .Errors.date }} border-2 border-red-700 {{ else }} border border-gray-400 {{ end }}" />
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white bg-white dark:bg-gray-700 date-error" />
         {{ if .Errors.date }}
-        <div class="my-1 p-2 text-sm rounded border border-red-400 bg-red-100 text-red-700 font-mono flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+        <div class="mt-1 flex items-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-3 rounded-md border border-red-200 dark:border-red-800/50">
+          <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
           </svg>
-          '{{ .Date }}' is not a valid date.
+          <span class="font-mono text-xs">'{{ .Date }}' is not a valid date.</span>
         </div>
         {{ end }}
       </div>
 
-      <div class="col-span-2 lg:col-span-1">
-        <label for="paidBy">Paid By</label>
-        <select id="paidBy" name="paidBy" class="px-3 py-1 text-sm border border-gray-400 w-full">
+      <div>
+        <label for="paidBy" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Paid By</label>
+        <select id="paidBy" name="paidBy" 
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white bg-white dark:bg-gray-700">
           {{ range .Users }}
           <option value="{{ .Id }}">{{ .Name }}</option>
           {{ end }}
         </select>
       </div>
 
-      <div class="col-span-2 lg:col-span-1">
-        <label for="amount">Amount</label>
+      <div>
+        <label for="amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount</label>
         <input id="amount" name="amount" type="number" step="0.01"
           value="{{ .Amount }}"
-          class="px-3 py-1 text-sm w-full {{ if .Errors.amount }} border-2 border-red-700 {{ else }} border border-gray-400 {{ end }}" />
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white bg-white dark:bg-gray-700 amount-error" 
+          placeholder="0.00" />
         {{ if .Errors.amount }}
-        <div class="my-1 p-2 text-sm rounded border border-red-400 bg-red-100 text-red-700 font-mono flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 mr-2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+        <div class="mt-1 flex items-center gap-2 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 p-3 rounded-md border border-red-200 dark:border-red-800/50">
+          <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
           </svg>
-
-          '{{ .Amount }}' is not a valid amount.
+          <span class="font-mono text-xs">'{{ .Amount }}' is not a valid amount.</span>
         </div>
         {{ end }}
       </div>
 
-      <div class="col-span-2">
-        {{ range .Users }}
-        <label for="chk-{{ .Id }}" class="inline-flex items-center">
-          <input type="checkbox" id="chk-{{ .Id }}" name="chk-{{ .Id }}" class="w-6 h-6 mr-2" value="{{ .Id }}" checked />
-          {{ .Name }}
-        </label>
-        {{ end }}
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Users</label>
+        <div class="flex flex-wrap gap-3">
+          {{ range .Users }}
+          <label class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full cursor-pointer transition-colors duration-200">
+            <input type="checkbox" id="chk-{{ .Id }}" name="chk-{{ .Id }}" value="{{ .Id }}" class="w-5 h-5 text-blue-600 dark:text-blue-500 rounded focus:ring-2 focus:ring-blue-500 mr-2" checked />
+            <span class="text-gray-700 dark:text-gray-300">{{ .Name }}</span>
+          </label>
+          {{ end }}
+        </div>
       </div>
 
-      <div class="col-span-2">
-        <button type="submit" class="w-full px-3 py-1 font-bold text-sm bg-green-700 text-white">Submit</button>
+      <div>
+        <button type="submit" 
+          class="w-full bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+          Submit Expense
+        </button>
       </div>
     </form>
-  </body>
-
+  </div>
+</body>
 </html>

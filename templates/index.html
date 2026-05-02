@@ -8,153 +8,204 @@
     <link href="/static/styles.css" rel="stylesheet">
 </head>
 
-<body class="p-4 bg-gray-50 dark:bg-gray-700">
+<body class="p-0 bg-gray-50 dark:bg-gray-900">
     {{ if .Err }}
-    <div class="ml-64 p-2 text-sm rounded border border-red-400 bg-red-100 text-red-700 font-mono">
+    <div class="fixed top-4 left-14 right-4 p-3 text-sm rounded-lg border border-red-400 bg-red-50 text-red-700 font-mono z-50 shadow-sm" role="alert">
         {{ .Err }}
     </div>
     {{ end }}
 
-    <nav class="fixed top-0 left-0 overflow-hidden h-screen w-64" id="navbar">
-        <div class="px-3 py-4 bg-gray-50 dark:bg-gray-800 h-full">
-            <ul class="h-full flex flex-col font-medium space-y-2">
-                {{ range .Groups }}
-                <li>
-                    <a href="/{{ .Id }}" title="{{.Name}}"
-                        class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group {{ if eq .Id $.ActiveGroup }} bg-gray-100 dark:bg-gray-700 {{ end }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-6 mr-2" title="{{ .Name }}">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-                        </svg>
-                        <span class="ms-3">{{ .Name }}</span>
-                    </a>
-                </li>
-                {{ end }}
-                <li class="mt-auto">
-                    <a href="#"
-                        class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                        id="collapse-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-6 mr-2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
-                        </svg>
-
-                        <span class="ms-3">Collapse</span>
-                    </a>
-                </li>
-            </ul>
-
-        </div>
-    </nav>
-
-    <div class="p-4 ml-64 dark:text-white" id="content">
-        <div class="flex items-center justify-between mb-6">
-            <a href="/add-expense/{{ .ActiveGroup }}"
-                class="flex items-center justify-center rounded bg-transparent hover:bg-green-600 hover:text-white text-green-600 px-3 py-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-6 mr-2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Add Expense
-            </a>
-
-            {{ if not ( eq .ActiveGroup 0)}}
-            <a href="/import/{{ .ActiveGroup }}"
-               class="flex items-center justify-center rounded bg-transparent hover:bg-green-600 hover:text-white text-green-600 px-3 py-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                     stroke="currentColor" class="size-6 mr-2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Import
-            </a>
-            {{ end }}
-
-            <a href="/settle/{{ .ActiveGroup }}"
-                class="flex items-center justify-center rounded bg-transparent hover:bg-blue-400 hover:text-white text-blue-400 px-3 py-1">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-6 mr-2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-
-                Settle Up
-            </a>
-
-        </div>
-
-
-        <div class="grid grid-cols-4 gap-4">
-            {{ range .Users }}
-            <div
-                class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-gray-800 dark:border-gray-700">
-                <h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">{{ .Name }}</h5>
-                <div class="flex items-baseline text-gray-900 dark:text-white">
-                    <span class="text-3xl font-semibold">$</span>
-                    <span class="text-5xl font-extrabold tracking-tight">{{ .AmountOwed | formatCentsNumber }}</span>
-                    <span class="ms-1 text-xl font-normal text-gray-500 dark:text-gray-400">spent</span>
-                </div>
-                <ul role="list" class="space-y-5 my-7">
-                    {{ range .Debts }}
-                    <li class="flex items-center">
-
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                            class="size-6 shrink-0 w-4 h-4 text-blue-700 dark:text-blue-500">
-                            <path
-                                d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
-                            <path fill-rule="evenodd"
-                                d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z"
-                                clip-rule="evenodd" />
-                        </svg>
-
-                        <span class="text-base font-normal leading-tight text-gray-500 dark:text-gray-400 ms-3">Owes {{
-                            .Owes }} {{
-                            .Amount | formatCents }}</span>
+    <!-- Sidebar Navigation -->
+    <nav class="fixed top-0 bottom-0 overflow-hidden" id="navbar">
+        <div class="w-64 p-4 bg-white dark:bg-gray-800 border-r dark:border-gray-700 h-full flex flex-col shadow-lg">
+            <div class="flex-1">
+                <ul class="space-y-1">
+                    {{ range .Groups }}
+                    <li>
+                        <a href="/{{ .Id }}" title="{{.Name}}"
+                            class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-700 transition-colors {{ if eq .Id $.ActiveGroup }} bg-slate-100 dark:bg-gray-700 text-slate-900 dark:text-white font-medium {{ end }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5 flex-shrink-0">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                            </svg>
+                            <span class="ms-3">{{ .Name }}</span>
+                        </a>
                     </li>
                     {{ end }}
                 </ul>
             </div>
-            {{ end }}
-        </div>
 
-        <div class="mt-6">
-            <table class="w-full">
-                <thead class="border">
-                    <tr class="border-y">
-                        <th class="px-3 py-1 text-left">Date</th>
-                        <th class="px-3 py-1 text-left">Paid By</th>
-                        <th class="px-3 py-1 text-left">Description</th>
-                        <th class="px-3 py-1 text-right">Amount</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm font-mono border">
-                    {{ range .Expenses }}
-                    <tr class="border-y">
-                        <td class="px-3 py-1 text-left">{{ .CreatedOn | formatTime }}</td>
-                        <td class="px-3 py-1 text-left">{{ .PaidByName }}</td>
-                        <td class="px-3 py-1 text-left">{{ .Description }}</td>
-                        <td class="px-3 py-1 text-right">{{ .AmountCentsUsd | formatCents }}</td>
-                    </tr>
-                    {{ end }}
-                </tbody>
-            </table>
+            <div class="border-t pt-4 border-slate-200 dark:border-gray-600">
+                <a href="#"
+                    class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-700 transition-colors group"
+                    id="collapse-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-5 flex-shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                    </svg>
+                </a>
+            </div>
         </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="ml-64 min-h-screen transition-all duration-300" id="content">
+        <!-- Header Actions -->
+        <header class="sticky top-0 z-40 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-slate-200 dark:border-gray-700 px-6 py-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex flex-wrap gap-2">
+                    <a href="/add-expense/{{ .ActiveGroup }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors font-medium"
+                        title="Add a new expense">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span class="hidden sm:inline">Add Expense</span>
+                    </a>
+
+                    {{ if not ( eq .ActiveGroup 0)}}
+                    <a href="/import/{{ .ActiveGroup }}"
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors font-medium"
+                       title="Import expenses">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span class="hidden sm:inline">Import</span>
+                    </a>
+                    {{ end }}
+
+                    <a href="/settle/{{ .ActiveGroup }}"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors font-medium"
+                        title="Settle up with friends">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        <span class="hidden sm:inline">Settle Up</span>
+                    </a>
+
+                </div>
+            </div>
+        </header>
+
+        <!-- User Debt Cards -->
+        <main class="p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {{ range .Users }}
+                <div
+                    class="flex flex-col rounded-xl bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <div class="p-5">
+                        <div class="flex items-start justify-between mb-3">
+                            <h5 class="text-base font-semibold text-slate-800 dark:text-slate-200 truncate" title="{{ .Name }}">
+                                {{ .Name }}
+                            </h5>
+                        </div>
+
+                        <div class="text-center py-4 border-t border-b border-slate-100 dark:border-gray-700 my-3">
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total spent</p>
+                            <p class="text-3xl font-bold text-slate-900 dark:text-white mt-1">
+                                ${{ .AmountOwed | formatCentsNumber }}
+                            </p>
+                        </div>
+
+                        {{ if .Debts }}
+                        <ul class="divide-y divide-slate-100 dark:divide-gray-700">
+                            {{ range .Debts }}
+                            <li class="py-3 flex items-center justify-between transition-colors">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0">
+                                        <path
+                                            d="M10.464 8.746c.227-.18.497-.311.786-.394v2.795a2.252 2.252 0 0 1-.786-.393c-.394-.313-.546-.681-.546-1.004 0-.323.152-.691.546-1.004ZM12.75 15.662v-2.824c.347.085.664.228.921.421.427.32.579.686.579.991 0 .305-.152.671-.579.991a2.534 2.534 0 0 1-.921.42Z" />
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v.816a3.836 3.836 0 0 0-1.72.756c-.712.566-1.112 1.35-1.112 2.178 0 .829.4 1.612 1.113 2.178.502.4 1.102.647 1.719.756v2.978a2.536 2.536 0 0 1-.921-.421l-.879-.66a.75.75 0 0 0-.9 1.2l.879.66c.533.4 1.169.645 1.821.75V18a.75.75 0 0 0 1.5 0v-.81a4.124 4.124 0 0 0 1.821-.749c.745-.559 1.179-1.344 1.179-2.191 0-.847-.434-1.632-1.179-2.191a4.122 4.122 0 0 0-1.821-.75V8.354c.29.082.559.213.786.393l.415.33a.75.75 0 0 0 .933-1.175l-.415-.33a3.836 3.836 0 0 0-1.719-.755V6Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    <span class="ml-2.5 text-sm text-slate-600 dark:text-slate-400">Owes {{ .Owes }}</span>
+                                </div>
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    {{ .Amount | formatCents }}
+                                </span>
+                            </li>
+                            {{ end }}
+                        </ul>
+                        {{ end }}
+                    </div>
+
+                    <div class="mt-auto px-5 py-3 bg-slate-50 dark:bg-gray-850 border-t border-slate-100 dark:border-gray-700 flex justify-between items-center">
+                        <span class="text-xs text-slate-500 dark:text-slate-600">{{ .Debts | len }} debts</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-slate-400">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+
+            <!-- Expenses Table -->
+            <div class="mt-10 overflow-hidden rounded-xl border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+                <div class="px-6 py-4 border-b border-slate-200 dark:border-gray-700">
+                    <h2 class="text-lg font-semibold text-slate-800 dark:text-slate-200">Transaction History</h2>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 dark:bg-gray-750 border-b border-slate-200 dark:border-gray-700">
+                            <tr>
+                                <th class="px-6 py-4 font-medium text-slate-600">Date</th>
+                                <th class="px-6 py-4 font-medium text-slate-600">Paid By</th>
+                                <th class="px-6 py-4 font-medium text-slate-600">Description</th>
+                                <th class="px-6 py-4 font-medium text-slate-600 text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-gray-700">
+                            {{ range .Expenses }}
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-750 transition-colors">
+                                <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-300 whitespace-nowrap">{{ .CreatedOn | formatTime }}</td>
+                                <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-300">{{ .PaidByName }}</td>
+                                <td class="px-6 py-3 text-sm text-slate-600 dark:text-slate-300">{{ .Description }}</td>
+                                <td class="px-6 py-3 text-sm font-medium text-slate-900 dark:text-slate-100 text-right">{{ .AmountCentsUsd | formatCents }}</td>
+                            </tr>
+                            {{ end }}
+                        </tbody>
+                    </table>
+                    {{ if not .Expenses }}
+                    <div class="px-6 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
+                        No expenses recorded yet.
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+        </main>
     </div>
+
+    <script lang="js">
+        const btn = document.querySelector('#collapse-button');
+        const navbar = document.querySelector('#navbar');
+        const content = document.querySelector('#content');
+
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const isExpanded = navbar.classList.contains('w-64');
+
+            if (isExpanded) {
+                navbar.classList.remove('w-64', 'shadow-lg');
+                navbar.classList.add('w-16');
+                content.classList.remove('ml-64');
+                content.classList.add('ml-16');
+            } else {
+                navbar.classList.remove('w-16');
+                navbar.classList.add('w-64', 'shadow-lg');
+                content.classList.remove('ml-16');
+                content.classList.add('ml-64');
+            }
+        });
+    </script>
 </body>
 
 </html>
-
-<script lang="js">
-    const btn = document.querySelector('#collapse-button');
-    const navbar = document.querySelector('#navbar');
-
-    btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        navbar.classList.toggle('w-64');
-        document.querySelector('#content').classList.toggle('ml-64');
-        document.querySelector('#content').classList.toggle('ml-24');
-        document.querySelectorAll('#navbar>div>ul>li>a>svg').forEach(e => e.classList.toggle('mr-2'));
-        document.querySelectorAll('#navbar>div>ul>li>a>span').forEach(e => e.classList.toggle('hidden'));
-    });
-</script>
