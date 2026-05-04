@@ -18,6 +18,7 @@ type UserDto struct {
 	AmountOwed int
 	TotalPaid  int
 	Debts      []DebtDto
+	TotalDebts int
 }
 
 func ComputeAmountOwedByUserId(expenses []ExpenseRow) map[Pair]int {

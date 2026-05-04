@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 
@@ -48,7 +49,7 @@ func (h *SettlementHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}).ParseFiles("templates/settle.html")
 
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, "Could not execute template", 500)
 	}
 
 	users, err := h.userStore.ListUsersInGroup(group)
@@ -71,6 +72,9 @@ func (h *SettlementHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	dtos := []activity.UserDto{}
 	for _, v := range usersById {
+		for _, d := range v.Debts {
+			v.TotalDebts += d.Amount
+		}
 		dtos = append(dtos, v)
 	}
 
@@ -79,5 +83,9 @@ func (h *SettlementHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Users: dtos,
 	}
 
-	tmpl.Execute(w, model)
+	err = tmpl.Execute(w, model)
+	if err != nil {
+		slog.Error("Error executing template", "error", err)
+	}
+
 }
